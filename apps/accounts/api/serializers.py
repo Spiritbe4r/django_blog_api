@@ -24,7 +24,7 @@ class UserDetailSerializer(ModelSerializer):
         fields = [
             'username',
             'email',
-            'first_name',
+            'name',
             'last_name',
         ]
 

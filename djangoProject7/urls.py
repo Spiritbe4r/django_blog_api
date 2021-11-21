@@ -14,10 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from apps.accounts.api.views import RegisterView
-from rest_framework_jwt.views import obtain_jwt_token
+# from rest_framework_jwt.views import obtain_jwt_token
 from django.contrib import admin
 from django.urls import path,include
 from apps.accounts.views import Login,Logout
+from .yasg import urlpatterns as doc_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
   #  path('base/', include(('apps.base.urls','posts-api'))),
@@ -25,9 +26,10 @@ urlpatterns = [
     path('api/comments/',include(('apps.comments.api.urls','comments-api'))),
     path('api/posts/',include(('apps.posts.api.urls','posts-api'))),
     path('api/users/',include(('apps.accounts.api.urls','users-api'))),
-    path('api/auth/token/', obtain_jwt_token),
+    # path('api/auth/token/', obtain_jwt_token),
     path('logout/',Logout.as_view(),name='logout'),
     path('login/',Login.as_view(),name='login'),
      path('register/', RegisterView.as_view(), name='auth_register'),
     
 ]
+urlpatterns+=doc_urls

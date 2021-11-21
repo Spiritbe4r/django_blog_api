@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from apps.comments import Comment
+from apps.comments.models import Comment
 from markdown_deux import markdown
 
 

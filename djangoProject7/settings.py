@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
-
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,11 +46,11 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     "rest_framework",
-    "rest_framework.authtoken",
     "simple_history",
     "markdown_deux",
     "pagedown",
     'corsheaders',
+    'drf_yasg',
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -167,7 +167,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         # 'rest_framework.authentication.BasicAuthentication',
         #  'rest_framework.authentication.SessionAuthentication',
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        #"rest_framework_jwt.authentication.JSONWebTokenAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",

@@ -12,6 +12,7 @@ def create_comment_serializar(model_type='post',slug=None,parent_id=None,user=No
     class CommentCreateSerializer(ModelSerializer):
         class Meta:
             model=Comment
+            ref_name="1"
             fields=[
                 'id',
            

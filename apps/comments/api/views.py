@@ -43,7 +43,7 @@ class CommentListAPIView(ListAPIView):
 
     serializer_class=CommentSerializer
     filter_backends = [SearchFilter,OrderingFilter]
-    search_fields=['content','user__first_name']
+    search_fields=['content','user__last_name']
     pagination_class = PostPageNumberPagination #pageNumberpagination
     def get_queryset(self,*args,**kwargs):
         queryset_list = Comment.objects.all()
@@ -52,7 +52,7 @@ class CommentListAPIView(ListAPIView):
             queryset_list=queryset_list.filter(
                 
                 Q(content__icontains=query) |
-                Q(user__first_name__icontains=query) |
+    
                 Q(user__last_name__icontains=query)
             ).distinct()
 
