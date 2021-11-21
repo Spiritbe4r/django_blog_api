@@ -1,0 +1,1 @@
+web gunicorn djangoProject7.wsg:aplication --log-file -
