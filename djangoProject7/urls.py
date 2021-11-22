@@ -21,14 +21,14 @@ from django.urls import path,include
 from .yasg import urlpatterns as doc_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
-  #  path('base/', include(('apps.base.urls','posts-api'))),
-   # path('', include("apps.posts.urls", namespace='posts')),
+    #  path('base/', include(('apps.base.urls','posts-api'))),
+    # path('', include("apps.posts.urls", namespace='posts')),
     path('api/comments/',include(('apps.comments.api.urls','comments-api'))),
-    path('api/posts/',include(('apps.posts.api.urls','posts-api'))),
+    path('api/',include('apps.posts.api.urls',namespace='posts-api')),
     path('api/users/',include('apps.accounts.api.urls',namespace='users-api')),
     # path('api/auth/token/', obtain_jwt_token),
    
-     path('register/', RegisterView.as_view(), name='auth_register'),
+    path('register/', RegisterView.as_view(), name='auth_register'),
     
 ]
 urlpatterns+=doc_urls
