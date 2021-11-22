@@ -46,12 +46,15 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     "rest_framework",
+    'rest_framework_simplejwt',
     "simple_history",
     "markdown_deux",
     "pagedown",
     'corsheaders',
     'drf_yasg',
 ]
+
+
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
@@ -167,6 +170,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         # 'rest_framework.authentication.BasicAuthentication',
         #  'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
         #"rest_framework_jwt.authentication.JSONWebTokenAuthentication",
     ],
     "DEFAULT_RENDERER_CLASSES": [
@@ -187,4 +191,13 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000"
 ]
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
 django_heroku.settings(locals())

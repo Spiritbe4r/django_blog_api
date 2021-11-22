@@ -17,7 +17,7 @@ from apps.accounts.api.views import RegisterView
 # from rest_framework_jwt.views import obtain_jwt_token
 from django.contrib import admin
 from django.urls import path,include
-from apps.accounts.views import Login,Logout
+
 from .yasg import urlpatterns as doc_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,10 +25,9 @@ urlpatterns = [
    # path('', include("apps.posts.urls", namespace='posts')),
     path('api/comments/',include(('apps.comments.api.urls','comments-api'))),
     path('api/posts/',include(('apps.posts.api.urls','posts-api'))),
-    path('api/users/',include(('apps.accounts.api.urls','users-api'))),
+    path('api/users/',include('apps.accounts.api.urls',namespace='users-api')),
     # path('api/auth/token/', obtain_jwt_token),
-    path('logout/',Logout.as_view(),name='logout'),
-    path('login/',Login.as_view(),name='login'),
+   
      path('register/', RegisterView.as_view(), name='auth_register'),
     
 ]

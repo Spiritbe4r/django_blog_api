@@ -1,6 +1,8 @@
 from django.contrib.sessions.models import Session
 from rest_framework.views import APIView
-from apps.accounts.api.serializers import UserTokenSerializer
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from apps.accounts.api.serializers import MyTokenObtainPairSerializer, UserTokenSerializer
 from datetime import datetime
 from django.contrib.auth import (
     authenticate,
@@ -34,48 +36,72 @@ class UserToken(Authentication, APIView):
                 'error': 'Credenciales enviadas incorrectas.'
             },status = status.HTTP_400_BAD_REQUEST)
 
-class Login(ObtainAuthToken):
+class Login(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
-    def post(self,request,*args,**kwargs):
-        # send to serializer username and password
-        login_serializer = self.serializer_class(data = request.data, context = {'request':request})
-        if login_serializer.is_valid():
-            # login serializer return user in validated_data
-            user = login_serializer.validated_data['user']
-            if user.is_active:
-                token,created = Token.objects.get_or_create(user = user)
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username', '')
+        password = request.data.get('password', '')
+        user = authenticate(
+            username=username,
+            password=password
+        )
+
+        if user:
+            login_serializer = self.serializer_class(data=request.data)
+            if login_serializer.is_valid():
                 user_serializer = UserTokenSerializer(user)
-                if created:
-                    return Response({
-                        'token': token.key,
-                        'user': user_serializer.data,
-                        'message': 'Inicio de Sesión Exitoso.'
-                    }, status = status.HTTP_201_CREATED)
-                else:
-                    all_sessions = Session.objects.filter(expire_date__gte = datetime.now())
-                    if all_sessions.exists():
-                        for session in all_sessions:
-                            session_data = session.get_decoded()
-                            if user.id == int(session_data.get('_auth_user_id')):
-                                session.delete()
-                    token.delete()
-                    token = Token.objects.create(user = user)
-                    return Response({
-                        'token': token.key,
-                        'user': user_serializer.data,
-                        'message': 'Inicio de Sesión Exitoso.'
-                    }, status = status.HTTP_201_CREATED)
-                    """
-                    return Response({
-                        'error': 'Ya se ha iniciado sesión con este usuario.'
-                    }, status = status.HTTP_409_CONFLICT)
-                    """
-            else:
-                return Response({'error':'Este usuario no puede iniciar sesión.'}, 
-                                    status = status.HTTP_401_UNAUTHORIZED)
-        else:
-            return Response({'error': 'Nombre de usuario o contraseña incorrectos.'},
-                                    status = status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'token': login_serializer.validated_data.get('access'),
+                    'refresh-token': login_serializer.validated_data.get('refresh'),
+                    'user': user_serializer.data,
+                    'message': 'Inicio de Sesion Existoso'
+                }, status=status.HTTP_200_OK)
+            return Response({'error': 'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
+
+# class Login(ObtainAuthToken):
+
+#     def post(self,request,*args,**kwargs):
+#         # send to serializer username and password
+#         login_serializer = self.serializer_class(data = request.data, context = {'request':request})
+#         if login_serializer.is_valid():
+#             # login serializer return user in validated_data
+#             user = login_serializer.validated_data['user']
+#             if user.is_active:
+#                 token,created = Token.objects.get_or_create(user = user)
+#                 user_serializer = UserTokenSerializer(user)
+#                 if created:
+#                     return Response({
+#                         'token': token.key,
+#                         'user': user_serializer.data,
+#                         'message': 'Inicio de Sesión Exitoso.'
+#                     }, status = status.HTTP_201_CREATED)
+#                 else:
+#                     all_sessions = Session.objects.filter(expire_date__gte = datetime.now())
+#                     if all_sessions.exists():
+#                         for session in all_sessions:
+#                             session_data = session.get_decoded()
+#                             if user.id == int(session_data.get('_auth_user_id')):
+#                                 session.delete()
+#                     token.delete()
+#                     token = Token.objects.create(user = user)
+#                     return Response({
+#                         'token': token.key,
+#                         'user': user_serializer.data,
+#                         'message': 'Inicio de Sesión Exitoso.'
+#                     }, status = status.HTTP_201_CREATED)
+                    
+#                     return Response({
+#                         'error': 'Ya se ha iniciado sesión con este usuario.'
+#                     }, status = status.HTTP_409_CONFLICT)
+                    
+#             else:
+#                 return Response({'error':'Este usuario no puede iniciar sesión.'}, 
+#                                     status = status.HTTP_401_UNAUTHORIZED)
+#         else:
+#             return Response({'error': 'Nombre de usuario o contraseña incorrectos.'},
+#                                     status = status.HTTP_400_BAD_REQUEST)
 
 class Logout(APIView):
 
