@@ -28,8 +28,7 @@ class PostDetailSerializer(ModelSerializer):
     url=post_detail_url
     user = UserDetailSerializer(read_only=True)
     image = SerializerMethodField()
-    markdown = SerializerMethodField()
-    html=SerializerMethodField()
+    #html=SerializerMethodField()
     comments=SerializerMethodField()
     class Meta:
         model = Post
@@ -40,19 +39,12 @@ class PostDetailSerializer(ModelSerializer):
             'title',
             'slug',
             'content',
-            'html',
-            'markdown',
+            # 'html',
             'publish',
             'image',
             'comments',
         ]
 
-    def get_html(self,obj):
-        return obj.get_markdown()
-    def get_markdown(self,obj):
-        return obj.get_markdown()
- #   def get_user(self,obj):
-    #    return str(obj.user.username)
     def get_image(self,obj):
         try:
             image=obj.image.url

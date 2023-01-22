@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-
+# import readtime;
 
 from django.db import models
 from django.db.models.signals import pre_save
@@ -13,8 +13,6 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
 from apps.comments.models import Comment
-from markdown_deux import markdown
-
 
 from .utils import get_read_time
 # Create your models here.
@@ -79,11 +77,11 @@ class Post(models.Model):
         return reverse("posts-api:detail", kwargs={"slug": self.slug})
     class Meta:
         ordering = ["-timestamp", "-updated"]
-
-    def get_markdown(self):
-        content = self.content
-        markdown_text = markdown(content)
-        return mark_safe(markdown_text)
+    
+    # def get_markdown(self):
+    #     content = self.content
+    #     markdown_text = markdown(content)
+    #     return mark_safe(markdown_text)
     
     @property
     def comments(self):
@@ -115,10 +113,10 @@ def pre_save_post_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = create_slug(instance)
 
-    if instance.content:
-        html_string = instance.get_markdown()
-        read_time_var = get_read_time(html_string)
-        instance.read_time = read_time_var
+    # if instance.content:
+    #     html_string = instance.get_markdown()
+    #     read_time_var = readtime.of_text(html_string)
+    #     instance.read_time = read_time_var
 
 
 pre_save.connect(pre_save_post_receiver, sender=Post)
